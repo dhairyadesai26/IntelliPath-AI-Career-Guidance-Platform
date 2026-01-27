@@ -1,9 +1,12 @@
 import Image from "next/image";
 import {Button} from "@/components/ui/button";
+import HeroSection from "@/components/hero";
 
 export default function Home() {
   return <div>
-    <h1>Welcome to IntelliPath</h1>
-    <Button>Hello</Button>
+    <div
+      className="grid-background" >
+      </div> 
+      <HeroSection/>
   </div>
 }
