@@ -1,32 +1,32 @@
 export const faqs = [
   {
-    question: "What makes Sensai unique as a career development tool?",
+    question: "What makes IntelliPath different from other career platforms?",
     answer:
-      "Sensai combines AI-powered career tools with industry-specific insights to help you advance your career. Our platform offers three main features: an intelligent resume builder, a cover letter generator, and an adaptive interview preparation system. Each tool is tailored to your industry and skills, providing personalized guidance for your professional journey.",
+      "IntelliPath combines AI-powered career assessments, resume optimization, cover letter generation, and interview preparation in a single platform. Every feature is personalized based on your skills, experience, and selected industry, helping you make smarter career decisions and stand out in today’s job market.",
   },
   {
-    question: "How does Sensai create tailored content?",
+    question: "How does IntelliPath personalize my career content?",
     answer:
-      "Sensai learns about your industry, experience, and skills during onboarding. It then uses this information to generate customized resumes, cover letters, and interview questions. The content is specifically aligned with your professional background and industry standards, making it highly relevant and effective.",
+      "During onboarding, IntelliPath collects information about your industry, experience level, and skill set. This data is used by our AI to generate customized resumes, cover letters, and interview questions that align with your background and career goals.",
   },
   {
-    question: "How accurate and up-to-date are Sensai's industry insights?",
+    question: "How accurate and up-to-date are IntelliPath’s industry insights?",
     answer:
-      "We update our industry insights weekly using advanced AI analysis of current market trends. This includes salary data, in-demand skills, and industry growth patterns. Our system constantly evolves to ensure you have the most relevant information for your career decisions.",
+      "IntelliPath regularly updates industry insights using AI-driven analysis of market trends, including salary ranges, in-demand skills, and growth areas. This ensures you always have access to relevant and reliable career information.",
   },
   {
-    question: "Is my data secure with Sensai?",
+    question: "Is my personal and professional data secure on IntelliPath?",
     answer:
-      "Absolutely. We prioritize the security of your professional information. All data is encrypted and securely stored using industry-standard practices. We use Clerk for authentication and never share your personal information with third parties.",
+      "Yes. IntelliPath uses secure authentication and industry-standard encryption to protect your data. Your personal and professional information is never shared with third parties.",
   },
   {
-    question: "How can I track my interview preparation progress?",
+    question: "Can I track my progress on IntelliPath?",
     answer:
-      "Sensai tracks your performance across multiple practice interviews, providing detailed analytics and improvement suggestions. You can view your progress over time, identify areas for improvement, and receive AI-generated tips to enhance your interview skills based on your responses.",
+      "You can track your assessment results, interview practice performance, and improvement suggestions directly from your dashboard. This helps you monitor your progress and focus on areas that need improvement.",
   },
   {
-    question: "Can I edit the AI-generated content?",
+    question: "Can I edit the AI-generated resumes and cover letters?",
     answer:
-      "Yes! While Sensai generates high-quality initial content, you have full control to edit and customize all generated resumes, cover letters, and other content. Our markdown editor makes it easy to refine the content to perfectly match your needs.",
+      "Absolutely. All AI-generated content in IntelliPath is fully editable, allowing you to customize resumes and cover letters according to your preferences and specific job applications.",
   },
 ];
