@@ -22,7 +22,7 @@ const Header = () => {
      </Link>
       <div className="flex items-center space-x-2 md:space-x-4">
         <SignedIn>
-          <Link href='/dashboard'>
+          <Link href='/industryinsights'>
           <Button variant="outline">
             <LayoutDashboard className="h-4 w-4" />
           <span className="hidden md:block" >Industry Insights</span> 
