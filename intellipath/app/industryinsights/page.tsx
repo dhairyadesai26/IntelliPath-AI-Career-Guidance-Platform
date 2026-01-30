@@ -92,7 +92,7 @@ export default function IndustryInsightsPage() {
             </div>
             <div className="mt-8">
               <h3 className="text-lg font-semibold mb-2">Salary Ranges by Role</h3>
-              <p className="text-xs text-muted-foreground mb-2">Displaying minimum, median, and maximum salaries (in thousands)</p>
+              <p className="text-xs text-muted-foreground mb-2">Displaying minimum, median, and maximum salaries </p>
               <SalaryBarChart data={dashboard.salaryRanges} />
             </div>
           </div>
