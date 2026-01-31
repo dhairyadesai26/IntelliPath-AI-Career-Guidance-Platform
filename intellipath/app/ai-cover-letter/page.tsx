@@ -1,6 +1,6 @@
 
 'use client';
-import React, { useState } from "react";
+
 
 export default function CoverLetterPage() {
   const [form, setForm] = useState({
@@ -17,6 +17,17 @@ export default function CoverLetterPage() {
   });
   const [generated, setGenerated] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const handleDownloadPDF = async () => {
+    if (!generated) return;
+    const jsPDF = (await import("jspdf")).default;
+    const doc = new jsPDF();
+    const lines = doc.splitTextToSize(generated, 180);
+    doc.setFont("times", "normal");
+    doc.setFontSize(12);
+    doc.text(lines, 15, 20);
+    doc.save("cover-letter.pdf");
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -139,7 +150,15 @@ export default function CoverLetterPage() {
         </form>
         {generated && (
           <div className="mt-8 p-4 bg-muted rounded border border-muted-foreground whitespace-pre-line">
-            <h2 className="font-bold mb-2">Your Cover Letter:</h2>
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="font-bold">Your Cover Letter:</h2>
+              <button
+                onClick={handleDownloadPDF}
+                className="bg-primary text-primary-foreground px-3 py-1 rounded text-sm font-medium hover:bg-primary/90 transition"
+              >
+                Download as PDF
+              </button>
+            </div>
             <div>{generated}</div>
           </div>
         )}
@@ -147,3 +166,4 @@ export default function CoverLetterPage() {
     </main>
   );
 }
+import React, { useState } from "react";
