@@ -108,17 +108,23 @@ export default function IndustryInsightsPage() {
           <div className="col-span-full text-center text-muted-foreground">No news found.</div>
         ) : (
           news.map((newsItem, idx) => (
-            <Card key={idx} className="overflow-hidden flex flex-col">
-              {newsItem.image && (
-                <img src={newsItem.image} alt={newsItem.title} className="w-full h-48 object-cover" />
+            <Card key={idx} className="overflow-hidden flex flex-col bg-background border border-muted shadow-xl hover:shadow-2xl transition-shadow duration-200">
+              {newsItem.image && newsItem.image.trim() !== "" && (
+                <div className="relative w-full h-48 bg-muted flex items-center justify-center">
+                  <img
+                    src={newsItem.image}
+                    alt={newsItem.title}
+                    className="w-full h-48 object-cover object-center transition-transform duration-200 hover:scale-105"
+                  />
+                </div>
               )}
               <CardContent className="flex-1 flex flex-col justify-between p-6">
                 <div>
                   <a href={newsItem.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                    <h2 className="text-xl font-bold mb-2">{newsItem.title}</h2>
+                    <h2 className="text-xl font-bold mb-2 line-clamp-2 min-h-[2.5em]">{newsItem.title}</h2>
                   </a>
                   <p
-                    className="text-muted-foreground mb-4"
+                    className="text-muted-foreground mb-4 line-clamp-4 min-h-[6.5em]"
                     style={{
                       display: '-webkit-box',
                       WebkitLineClamp: 4,
