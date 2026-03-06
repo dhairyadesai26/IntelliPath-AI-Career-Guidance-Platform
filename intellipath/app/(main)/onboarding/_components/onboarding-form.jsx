@@ -8,15 +8,50 @@ import { useState } from "react";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectItem } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import useFetch from "@/hooks/use-fetch";
+import { updateUser } from "@/actions/user";
+import { toast } from "sonner";
+import { useEffect } from "react";
+import { Loader2 } from "lucide-react";
+
 const OnboardingForm = ({ industries }) => {
  const [selectedIndustry,setSelectedIndustry]=useState(null);
  const router=useRouter();
+  const {
+    loading:updateLoading,
+    fn:updateUserFn,
+    data:updateResult,
+
+  }=useFetch(updateUser);
     const {register,handleSubmit,formState:{errors},
 setValue,watch,
 }=useForm({
   resolver:zodResolver(onboardingSchema),
 });
-const onSubmit=async(values)=>{};
+const onSubmit=async(values)=>{
+try{
+  const formateedIndustry=`${values.industry}-${values.subIndustry 
+    .toLowerCase()
+    .replace(/ /g, "-")}`;
+    await updateUserFn({
+      ...values,
+      industry:formateedIndustry,
+    });
+}
+catch(error){
+console.log("Onboarding error",error);
+}
+};
+useEffect(()=>{
+  if(updateResult?.success && !updateLoading){
+    toast.success("Profile updated successfully!");
+    router.push("/dashboard");
+    router.refresh();
+
+  }
+},[updateResult,updateLoading]);
 const watchIndustry=watch("industry");
 
 return <div className="flex items-center justify-center bg-background">
@@ -27,14 +62,25 @@ return <div className="flex items-center justify-center bg-background">
   </CardHeader>
   <CardContent>
     
-      <form className="space-y-6 " onSubmit={handleSubmit(onSubmit)}>
+      <form
+  className="space-y-6"
+  onSubmit={handleSubmit(
+    onSubmit,
+    (errors) => {
+      console.log("FORM ERRORS:", errors);
+    }
+  )}
+>
+        <input type="hidden" {...register("industry")} />
+<input type="hidden" {...register("subIndustry")} />
+
         <div className="space-y-2">
           <Label htmlFor="industry">Industry</Label>
         <Select 
         onValueChange={(value)=>{
-          setValue("industry",value);
+          setValue("industry", value, { shouldValidate: true });
           setSelectedIndustry(
-        industries.find((ind)=>ind.id===value)
+        industries.find((ind)=>ind.id==value)
           );
           setValue("subIndustry","");
         }}  >
@@ -47,7 +93,7 @@ return <div className="flex items-center justify-center bg-background">
       <SelectItem key={ind.id} value={ind.id}>{ind.name}</SelectItem>
      );
     })}
-     <SelectItem value="light">Light</SelectItem>
+
       
   </SelectContent>
 </Select>
@@ -57,22 +103,18 @@ return <div className="flex items-center justify-center bg-background">
           <Label htmlFor="subIndustry">Specialization</Label>
         <Select 
         onValueChange={(value)=>{
-          setValue("subIndustry",value);
-          setSelectedIndustry(
-        industries.find((ind)=>ind.id==value)
-          );
-          setValue("subIndustry","")
+          setValue("subIndustry", value, { shouldValidate:true });
         }}  >
   <SelectTrigger id="subIndustry">
     <SelectValue placeholder="Select an industry" />
   </SelectTrigger>
   <SelectContent>
-    {selectedIndustry?.subIndustries.map((ind)=>{
+    {selectedIndustry?.subIndustries?.map((ind)=>{
      return (
       <SelectItem key={ind} value={ind}>{ind}</SelectItem>
      );
     })}
-     <SelectItem value="light">Light</SelectItem>
+   
       
   </SelectContent>
 </Select>
@@ -90,7 +132,7 @@ return <div className="flex items-center justify-center bg-background">
 {errors.experience && (<p className="text-red-500 text-sm">{errors.experience.message}</p>)}
 </div>
 <div className="space-y-2">
-         < Label htmlFor="skills">skills</Label>    
+         < Label htmlFor="skills">Skills</Label>    
           <Input   
           id="skills"    
           placeholder="e.g., JavaScript, Python, Project Management"
@@ -98,6 +140,25 @@ return <div className="flex items-center justify-center bg-background">
           <p className="text-sm text-muted-foreground">Seperate multiple skills with commas</p>
 {errors.skills && (<p className="text-red-500 text-sm">{errors.skills.message}</p>)}
 </div>
+<div className="space-y-2">
+         < Label htmlFor="bio">Professional Bio</Label>    
+          <Textarea   
+          id="bio"    
+          placeholder="Tell us about your professional background..."
+          className="h-32"
+          {...register("bio")} />
+{errors.bio && (<p className="text-red-500 text-sm">{errors.bio.message}</p>)}
+</div>
+<Button type="submit" className="w-full" disabled={updateLoading}>
+ { updateLoading? (
+  <>
+  <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+   Saving...
+   </>
+ ): (
+ " Complete Profile"
+ )}
+</Button>
       </form>
     
   </CardContent>

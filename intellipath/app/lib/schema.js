@@ -1,11 +1,7 @@
 import { parse, z } from "zod";
 export const  onboardingSchema=z.object({
-industry:z.string({
-      required_error:"Please select an industry",
-}),
- subindustry:z.string({
-    required_error:"Please select a specialization",
- }),
+industry: z.string().min(1, "Industry is required"),
+subIndustry: z.string().min(1, "Specialization is required"),
  bio:z.string().max(500).optional(),
  experience:z
  .string()

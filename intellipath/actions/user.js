@@ -1,42 +1,35 @@
 "use server";
  import {auth} from "@clerk/nextjs/server"
  import { db } from "@/lib/prisma"
+import { generateAIInsights } from "@/lib/ai";
  
 export async function updateUser(data) {
     const {userId}=await auth();
-    if(!userId) throw new error("Unauthorized");
+    if(!userId) throw new Error("Unauthorized");
     const user = await db.user.findUnique(
         {
             where:{
             clerkUserId:userId,
             },
         });
-        if(!user) throw new error("User not found");
+        if(!user) throw new Error("User not found");
     try{
       const result=await db.$transaction(async(tx)=>{
-        let industryInsight=await tx.indsutryInsight.findUnique({
+        let industryInsight=await tx.industryInsight.findUnique({
             where:{
                 industry:data.industry,
             },
         });
         if(!industryInsight){
-           industryInsight=await tx.industryInsight.create({
-            data:{
-                industry:data.industry,
-                salaryRanges:[],
-                growthRate:[],
-                demandLevel:"Medium",
-                topSkills:[],
-                marketOutlook:"Neutral",
-                keyTreds:[],
-                recommendedSkills:[],
-                nextUpdate: new Date(Date.now +7*24*60*60*1000),
+          const  insights=await generateAIInsights(data.industry);
+ industryInsight=await db.industryInsight.create({
+    data:{
+     industry:data.industry,
+     ...insights,
+     nextUpdate: new Date(Date.now() +7*24*60*60*1000),
+    },
 
-
-
-
-            }
-           })
+});
     }
     const updatedUser=await tx.user.update({
            where:{
@@ -49,17 +42,18 @@ export async function updateUser(data) {
             skills:data.skills
            },
     });
-    return (updatedUser,industryInsight);
+    return {updatedUser,industryInsight};
 },
     {
        timeout:10000,
       }
     );
-    return result.user;  
+    return {success: true,...result};  
     } 
     catch(error){
-        console.error("Error updating user and industry:",error.message);
-        throw new Error("Failed to update profile")
+        
+        console.error("FULL ERROR:", error);
+        throw new Error("Failed to update profile"+error.message);
 
 }
 }
@@ -72,7 +66,7 @@ const {userId}=await auth();
             clerkUserId:userId,
             },
         });
-        if(!user) throw new error("User not found");
+        if(!user) throw new Error("User not found");
         try{
             const user=await db.user.findUnique({
              where:{
