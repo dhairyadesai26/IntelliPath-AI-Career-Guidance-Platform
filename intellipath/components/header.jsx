@@ -28,7 +28,7 @@ export default async function Header() {
         <Link href="/">
           <Image
             src={"/logo.png"}
-            alt="Intellipath Logo"
+            alt="Sensai Logo"
             width={200}
             height={60}
             className="h-12 py-1 w-auto object-contain"
@@ -41,14 +41,12 @@ export default async function Header() {
             <Link href="/dashboard">
               <Button
                 variant="outline"
-                className="hidden md:inline-flex items-center gap-2"
+                className=" items-center gap-2"
               >
                 <LayoutDashboard className="h-4 w-4" />
                 Industry Insights
               </Button>
-              <Button variant="ghost" className="md:hidden w-10 h-10 p-0">
-                <LayoutDashboard className="h-4 w-4" />
-              </Button>
+              
             </Link>
 
             {/* Growth Tools Dropdown */}
