@@ -66,11 +66,17 @@ const SalaryBarChart: React.FC<SalaryBarChartProps> = ({ data }) => {
                 tickFormatter={(value) => `${value} LPA`}
                 label={{ value: "Salary (LPA)", angle: -90, position: "insideLeft", fill: "#a3a3a3", fontSize: 12 }}
               />
-              <Tooltip 
+     <Tooltip 
                 contentStyle={{ background: "#18181b", border: "1px solid #333", color: "#fff" }}
-                formatter={(value, name) => [`₹${value} LPA`, name.charAt(0).toUpperCase() + name.slice(1)]}
+               formatter={(value, name) => {
+  const label = typeof name === "string"
+    ? name.charAt(0).toUpperCase() + name.slice(1)
+    : "";
+  return [`₹${value} LPA`, label];
+}}
                 labelFormatter={(label) => `${label}`}
               />
+          
               <Legend wrapperStyle={{ color: "#fff" }} />
               <Bar dataKey="min" fill="#60a5fa" name="Min" barSize={20} />
               <Bar dataKey="median" fill="#2563eb" name="Median" barSize={20} />
