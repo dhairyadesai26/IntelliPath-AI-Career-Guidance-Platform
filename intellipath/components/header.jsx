@@ -7,6 +7,7 @@ import {
   GraduationCap,
   ChevronDown,
   StarsIcon,
+  ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
@@ -20,8 +21,6 @@ import Image from "next/image";
 import { checkUser } from "@/lib/checkUser";
 
 export default async function Header() {
-  await checkUser();
-
   return (
     <header className="fixed top-0 w-full border-b bg-background/80 backdrop-blur-md z-50 supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -80,6 +79,39 @@ export default async function Header() {
                   <Link href="/interview" className="flex items-center gap-2">
                     <GraduationCap className="h-4 w-4" />
                     Interview Prep
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/careers" className="flex items-center gap-2">
+                    <LayoutDashboard className="h-4 w-4" />
+                    Career Recommendations
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/skill-gap" className="flex items-center gap-2">
+                    <LayoutDashboard className="h-4 w-4" />
+                    Skill Gap Analysis
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/roadmap" className="flex items-center gap-2">
+                    <LayoutDashboard className="h-4 w-4" />
+                    Learning Roadmap
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link
+                    href="/internships"
+                    className="flex items-center gap-2"
+                  >
+                    <LayoutDashboard className="h-4 w-4" />
+                    Internship Suggestions
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/admin" className="flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4" />
+                    Admin Panel
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>

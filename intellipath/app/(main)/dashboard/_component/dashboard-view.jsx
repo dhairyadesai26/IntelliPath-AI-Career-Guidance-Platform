@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const DashboardView = ({ insights }) => {
   // Transform salary data for the chart
@@ -77,6 +79,11 @@ const DashboardView = ({ insights }) => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <Badge variant="outline">Last updated: {lastUpdatedDate}</Badge>
+        <a href="/onboarding?edit=true">
+          <Button variant="outline" size="sm">
+            Edit Profile
+          </Button>
+        </a>
       </div>
 
       {/* Market Overview Cards */}

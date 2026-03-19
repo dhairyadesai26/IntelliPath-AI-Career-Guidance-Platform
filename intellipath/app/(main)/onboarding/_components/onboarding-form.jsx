@@ -30,7 +30,7 @@ import useFetch from "@/hooks/use-fetch";
 import { onboardingSchema } from "@/app/lib/schema";
 import { updateUser } from "@/actions/user";
 
-const OnboardingForm = ({ industries }) => {
+const OnboardingForm = ({ industries, initialData }) => {
   const router = useRouter();
   const [selectedIndustry, setSelectedIndustry] = useState(null);
 
@@ -40,6 +40,14 @@ const OnboardingForm = ({ industries }) => {
     data: updateResult,
   } = useFetch(updateUser);
 
+  // Parse existing industry into industry block and subIndustry
+  const defaultIndustry = initialData?.industry
+    ? initialData.industry.split("-")[0]
+    : "";
+  const defaultSubIndustry = initialData?.industry
+    ? initialData.industry.split("-").slice(1).join(" ").replace(/\b\w/g, l => l.toUpperCase()) // basic un-kebabing
+    : "";
+
   const {
     register,
     handleSubmit,
@@ -48,7 +56,20 @@ const OnboardingForm = ({ industries }) => {
     watch,
   } = useForm({
     resolver: zodResolver(onboardingSchema),
+    defaultValues: {
+      industry: defaultIndustry,
+      subIndustry: defaultSubIndustry,
+      experience: initialData?.experience?.toString() || "",
+      skills: initialData?.skills?.join(", ") || "",
+      bio: initialData?.bio || "",
+    },
   });
+
+  useEffect(() => {
+    if (defaultIndustry) {
+      setSelectedIndustry(industries.find((ind) => ind.id === defaultIndustry));
+    }
+  }, [defaultIndustry, industries]);
 
   const onSubmit = async (values) => {
     try {
@@ -66,12 +87,15 @@ const OnboardingForm = ({ industries }) => {
   };
 
   useEffect(() => {
-    if (updateResult?.success && !updateLoading) {
-      toast.success("Profile completed successfully!");
-      router.push("/dashboard");
-      router.refresh();
+    if (updateResult && !updateLoading) {
+      toast.success(initialData ? "Profile updated successfully!" : "Profile completed successfully!");
+      // Add a small delay so the toast has time to render before navigation
+      setTimeout(() => {
+        router.push("/dashboard");
+        router.refresh();
+      }, 500);
     }
-  }, [updateResult, updateLoading]);
+  }, [updateResult, updateLoading, initialData, router]);
 
   const watchIndustry = watch("industry");
 

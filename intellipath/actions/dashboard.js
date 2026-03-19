@@ -5,7 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 export const generateAIInsights = async (industry) => {
   const prompt = `
@@ -30,10 +30,20 @@ export const generateAIInsights = async (industry) => {
 
   const result = await model.generateContent(prompt);
   const response = result.response;
-  const text = response.text();
-  const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
-
-  return JSON.parse(cleanedText);
+  let text = response.text();
+  
+  try {
+    const match = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    if (match) {
+      text = match[1].trim();
+    } else {
+      text = text.replace(/```(?:json)?/g, "").replace(/```/g, "").trim();
+    }
+    return JSON.parse(text);
+  } catch (error) {
+    console.error("Error parsing JSON from Gemini:", error, text);
+    throw new Error("Failed to parse AI industry insights.");
+  }
 };
 
 export async function getIndustryInsights() {

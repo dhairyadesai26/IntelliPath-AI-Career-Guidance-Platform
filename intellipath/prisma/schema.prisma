@@ -27,6 +27,8 @@ model User {
   assessments   Assessment[]
   resume        Resume?
   coverLetter   CoverLetter[]
+  predictions   Prediction[]
+  roadmaps      Roadmap[]
 }
 
 model Assessment {
@@ -96,4 +98,115 @@ model IndustryInsight {
   nextUpdate    DateTime  // Scheduled update time
 
   @@index([industry])
+}
+
+// -----------------------------
+// IntelliPath Career Models
+// -----------------------------
+
+model Career {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  description String?
+  industry    String?
+  level       String?       // e.g. "Entry", "Mid", "Senior"
+
+  // Relations
+  careerSkills CareerSkill[]
+  predictions  Prediction[]
+  roadmaps     Roadmap[]
+  internships  Internship[]
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([industry])
+}
+
+model Skill {
+  id          String        @id @default(cuid())
+  name        String        @unique
+  category    String?
+  description String?
+
+  // Relations
+  careerSkills CareerSkill[]
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model CareerSkill {
+  id        String  @id @default(cuid())
+  careerId  String
+  skillId   String
+  weight    Int     @default(1) // Importance of the skill for the career
+
+  career    Career  @relation(fields: [careerId], references: [id])
+  skill     Skill   @relation(fields: [skillId], references: [id])
+
+  @@unique([careerId, skillId])
+  @@index([skillId])
+}
+
+model Prediction {
+  id         String   @id @default(cuid())
+  userId     String
+  careerId   String
+  matchScore Float
+  userSkills String[]        // Snapshot of user skills at prediction time
+
+  user       User     @relation(fields: [userId], references: [id])
+  career     Career   @relation(fields: [careerId], references: [id])
+
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([careerId])
+}
+
+model Roadmap {
+  id         String   @id @default(cuid())
+  userId     String
+  careerId   String
+
+  // JSON structure:
+  // [
+  //   {
+  //     skill: string,
+  //     steps: [
+  //       { title: string, description: string, order: number }
+  //     ]
+  //   }
+  // ]
+  steps      Json
+
+  user       User     @relation(fields: [userId], references: [id])
+  career     Career   @relation(fields: [careerId], references: [id])
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId, careerId])
+  @@unique([userId, careerId], name: "userId_careerId")
+}
+
+model Internship {
+  id          String   @id @default(cuid())
+  title       String
+  company     String
+  location    String?
+  applyUrl    String
+  description String?
+  isRemote    Boolean  @default(false)
+
+  careerId    String?
+  career      Career?  @relation(fields: [careerId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([careerId])
+  @@index([company])
 }
