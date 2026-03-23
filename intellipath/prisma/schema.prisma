@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -100,9 +101,14 @@ model IndustryInsight {
   @@index([industry])
 }
 
-// -----------------------------
-// IntelliPath Career Models
-// -----------------------------
+// ─── IntelliPath Career Guidance Models ───────────────────────────────────────
+
+model Skill {
+  id          String        @id @default(cuid())
+  name        String        @unique
+  category    String?
+  careerSkills CareerSkill[]
+}
 
 model Career {
   id          String        @id @default(cuid())
@@ -110,86 +116,51 @@ model Career {
   slug        String        @unique
   description String?
   industry    String?
-  level       String?       // e.g. "Entry", "Mid", "Senior"
-
-  // Relations
+  level       String?       // "Entry", "Mid", "Senior"
   careerSkills CareerSkill[]
   predictions  Prediction[]
   roadmaps     Roadmap[]
   internships  Internship[]
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-
-  @@index([industry])
-}
-
-model Skill {
-  id          String        @id @default(cuid())
-  name        String        @unique
-  category    String?
-  description String?
-
-  // Relations
-  careerSkills CareerSkill[]
-
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  @@index([slug])
 }
 
 model CareerSkill {
   id        String  @id @default(cuid())
-  careerId  String
-  skillId   String
-  weight    Int     @default(1) // Importance of the skill for the career
-
   career    Career  @relation(fields: [careerId], references: [id])
+  careerId  String
   skill     Skill   @relation(fields: [skillId], references: [id])
+  skillId   String
 
   @@unique([careerId, skillId])
-  @@index([skillId])
 }
 
 model Prediction {
   id         String   @id @default(cuid())
-  userId     String
-  careerId   String
-  matchScore Float
-  userSkills String[]        // Snapshot of user skills at prediction time
-
   user       User     @relation(fields: [userId], references: [id])
-  career     Career   @relation(fields: [careerId], references: [id])
-
-  createdAt  DateTime @default(now())
-
-  @@index([userId])
-  @@index([careerId])
-}
-
-model Roadmap {
-  id         String   @id @default(cuid())
   userId     String
-  careerId   String
-
-  // JSON structure:
-  // [
-  //   {
-  //     skill: string,
-  //     steps: [
-  //       { title: string, description: string, order: number }
-  //     ]
-  //   }
-  // ]
-  steps      Json
-
-  user       User     @relation(fields: [userId], references: [id])
   career     Career   @relation(fields: [careerId], references: [id])
-
+  careerId   String
+  matchScore Float    @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  @@index([userId, careerId])
-  @@unique([userId, careerId], name: "userId_careerId")
+  @@unique([userId, careerId])
+  @@index([userId])
+}
+
+model Roadmap {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  career    Career   @relation(fields: [careerId], references: [id])
+  careerId  String
+  steps     Json[]   // Array of { skill, steps: [{title, description, order}] }
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, careerId])
+  @@index([userId])
 }
 
 model Internship {
@@ -197,16 +168,12 @@ model Internship {
   title       String
   company     String
   location    String?
-  applyUrl    String
+  applyUrl    String?
   description String?
   isRemote    Boolean  @default(false)
-
-  careerId    String?
   career      Career?  @relation(fields: [careerId], references: [id])
-
+  careerId    String?
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 
   @@index([careerId])
-  @@index([company])
-}
+}

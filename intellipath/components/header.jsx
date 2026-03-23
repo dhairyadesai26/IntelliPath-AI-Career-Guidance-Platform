@@ -7,7 +7,11 @@ import {
   GraduationCap,
   ChevronDown,
   StarsIcon,
+  TrendingUp,
+  MapPin,
+  Briefcase,
   ShieldCheck,
+  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
@@ -15,10 +19,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
-import { checkUser } from "@/lib/checkUser";
 
 export default async function Header() {
   return (
@@ -59,7 +63,7 @@ export default async function Header() {
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuItem asChild>
                   <Link href="/resume" className="flex items-center gap-2">
                     <FileText className="h-4 w-4" />
@@ -81,21 +85,24 @@ export default async function Header() {
                     Interview Prep
                   </Link>
                 </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
                 <DropdownMenuItem asChild>
                   <Link href="/careers" className="flex items-center gap-2">
-                    <LayoutDashboard className="h-4 w-4" />
+                    <TrendingUp className="h-4 w-4" />
                     Career Recommendations
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/skill-gap" className="flex items-center gap-2">
-                    <LayoutDashboard className="h-4 w-4" />
+                    <BookOpen className="h-4 w-4" />
                     Skill Gap Analysis
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/roadmap" className="flex items-center gap-2">
-                    <LayoutDashboard className="h-4 w-4" />
+                    <MapPin className="h-4 w-4" />
                     Learning Roadmap
                   </Link>
                 </DropdownMenuItem>
@@ -104,10 +111,13 @@ export default async function Header() {
                     href="/internships"
                     className="flex items-center gap-2"
                   >
-                    <LayoutDashboard className="h-4 w-4" />
+                    <Briefcase className="h-4 w-4" />
                     Internship Suggestions
                   </Link>
                 </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
                 <DropdownMenuItem asChild>
                   <Link href="/admin" className="flex items-center gap-2">
                     <ShieldCheck className="h-4 w-4" />

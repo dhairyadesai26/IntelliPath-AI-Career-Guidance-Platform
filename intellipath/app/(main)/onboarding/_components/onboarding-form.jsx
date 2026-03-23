@@ -32,21 +32,44 @@ import { updateUser } from "@/actions/user";
 
 const OnboardingForm = ({ industries, initialData }) => {
   const router = useRouter();
-  const [selectedIndustry, setSelectedIndustry] = useState(null);
+  const isEditing = !!initialData?.industry;
+
+  // Derive the industry id and subIndustry from the stored "industry-subIndustry" string
+  // e.g. "tech-software-development" → industry = "tech", subIndustry = "Software Development"
+  const getInitialIndustryId = () => {
+    if (!initialData?.industry) return null;
+    const parts = initialData.industry.split("-");
+    return parts[0]; // e.g. "tech"
+  };
+
+  const getInitialSubIndustry = () => {
+    if (!initialData?.industry) return "";
+    const parts = initialData.industry.split("-");
+    const subSlug = parts.slice(1).join("-"); // e.g. "software-development"
+    const industryObj = industries.find((i) => i.id === parts[0]);
+    if (!industryObj) return "";
+    // Find the matching subIndustry by comparing slugified names
+    return (
+      industryObj.subIndustries.find(
+        (sub) => sub.toLowerCase().replace(/ /g, "-") === subSlug
+      ) ?? ""
+    );
+  };
+
+  const initialIndustryId = getInitialIndustryId();
+  const initialSubIndustry = getInitialSubIndustry();
+
+  const [selectedIndustry, setSelectedIndustry] = useState(
+    initialIndustryId
+      ? industries.find((ind) => ind.id === initialIndustryId) ?? null
+      : null
+  );
 
   const {
     loading: updateLoading,
     fn: updateUserFn,
     data: updateResult,
   } = useFetch(updateUser);
-
-  // Parse existing industry into industry block and subIndustry
-  const defaultIndustry = initialData?.industry
-    ? initialData.industry.split("-")[0]
-    : "";
-  const defaultSubIndustry = initialData?.industry
-    ? initialData.industry.split("-").slice(1).join(" ").replace(/\b\w/g, l => l.toUpperCase()) // basic un-kebabing
-    : "";
 
   const {
     register,
@@ -57,19 +80,25 @@ const OnboardingForm = ({ industries, initialData }) => {
   } = useForm({
     resolver: zodResolver(onboardingSchema),
     defaultValues: {
-      industry: defaultIndustry,
-      subIndustry: defaultSubIndustry,
-      experience: initialData?.experience?.toString() || "",
-      skills: initialData?.skills?.join(", ") || "",
-      bio: initialData?.bio || "",
+      industry: initialIndustryId ?? "",
+      subIndustry: initialSubIndustry ?? "",
+      experience: initialData?.experience ?? "",
+      skills: Array.isArray(initialData?.skills)
+        ? initialData.skills.join(", ")
+        : initialData?.skills ?? "",
+      bio: initialData?.bio ?? "",
     },
   });
 
+  // Sync Select components (controlled outside RHF) with defaultValues on mount
   useEffect(() => {
-    if (defaultIndustry) {
-      setSelectedIndustry(industries.find((ind) => ind.id === defaultIndustry));
+    if (initialIndustryId) {
+      setValue("industry", initialIndustryId);
     }
-  }, [defaultIndustry, industries]);
+    if (initialSubIndustry) {
+      setValue("subIndustry", initialSubIndustry);
+    }
+  }, []);
 
   const onSubmit = async (values) => {
     try {
@@ -87,15 +116,14 @@ const OnboardingForm = ({ industries, initialData }) => {
   };
 
   useEffect(() => {
-    if (updateResult && !updateLoading) {
-      toast.success(initialData ? "Profile updated successfully!" : "Profile completed successfully!");
-      // Add a small delay so the toast has time to render before navigation
-      setTimeout(() => {
-        router.push("/dashboard");
-        router.refresh();
-      }, 500);
+    if (updateResult?.success && !updateLoading) {
+      toast.success(
+        isEditing ? "Profile updated successfully!" : "Profile completed successfully!"
+      );
+      router.push("/dashboard");
+      router.refresh();
     }
-  }, [updateResult, updateLoading, initialData, router]);
+  }, [updateResult, updateLoading]);
 
   const watchIndustry = watch("industry");
 
@@ -104,11 +132,12 @@ const OnboardingForm = ({ industries, initialData }) => {
       <Card className="w-full max-w-lg mt-10 mx-2">
         <CardHeader>
           <CardTitle className="gradient-title text-4xl">
-            Complete Your Profile
+            {isEditing ? "Edit Your Profile" : "Complete Your Profile"}
           </CardTitle>
           <CardDescription>
-            Select your industry to get personalized career insights and
-            recommendations.
+            {isEditing
+              ? "Update your industry, skills, and background information."
+              : "Select your industry to get personalized career insights and recommendations."}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -116,6 +145,7 @@ const OnboardingForm = ({ industries, initialData }) => {
             <div className="space-y-2">
               <Label htmlFor="industry">Industry</Label>
               <Select
+                defaultValue={initialIndustryId ?? undefined}
                 onValueChange={(value) => {
                   setValue("industry", value);
                   setSelectedIndustry(
@@ -149,6 +179,7 @@ const OnboardingForm = ({ industries, initialData }) => {
               <div className="space-y-2">
                 <Label htmlFor="subIndustry">Specialization</Label>
                 <Select
+                  defaultValue={initialSubIndustry || undefined}
                   onValueChange={(value) => setValue("subIndustry", value)}
                 >
                   <SelectTrigger id="subIndustry">
@@ -224,6 +255,8 @@ const OnboardingForm = ({ industries, initialData }) => {
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Saving...
                 </>
+              ) : isEditing ? (
+                "Update Profile"
               ) : (
                 "Complete Profile"
               )}
