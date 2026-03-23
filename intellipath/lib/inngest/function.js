@@ -1,6 +1,7 @@
 import { db } from "@/lib/prisma";
 import { inngest } from "./client";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { revalidatePath } from "next/cache";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
@@ -141,7 +142,7 @@ export const scoreCareers = inngest.createFunction(
       db.$transaction(
         scored.map((item) =>
           db.prediction.create({
-            data: { userId: user.id, careerId: item.career.id, matchScore: item.matchScore, userSkills },
+            data: { userId: user.id, careerId: item.career.id, matchScore: item.matchScore },
           })
         )
       )
@@ -391,7 +392,7 @@ Rules:
         const score = Math.min(100, Math.max(0, p.matchScore ?? 0)) / 100;
         await db.prediction.deleteMany({ where: { userId, careerId: career.id } }).catch(() => { });
         await db.prediction.create({
-          data: { userId, careerId: career.id, matchScore: score, userSkills },
+          data: { userId, careerId: career.id, matchScore: score },
         });
       }
     });
@@ -457,12 +458,11 @@ Rules:
       })
     );
 
-    // Force Next.js to clear cache for the updated pages
+    // Revalidate Next.js cache for updated pages
     await step.run("Revalidate paths", async () => {
-      // Import dynamically to avoid top-level Inngest restrictions
-      const { revalidatePath } = require("next/cache");
       revalidatePath("/dashboard");
       revalidatePath("/careers");
+      revalidatePath("/skill-gap");
       revalidatePath("/internships");
       revalidatePath("/roadmap");
       return "Paths revalidated";
