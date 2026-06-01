@@ -10,7 +10,6 @@ Transforming career uncertainty into data-driven career success through Artifici
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
 ![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma)
 ![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?style=for-the-badge&logo=supabase)
 ![Inngest](https://img.shields.io/badge/Inngest-Workflows-black?style=for-the-badge)
@@ -107,7 +106,7 @@ Advanced predictive models analyze:
 
 Generate detailed step-by-step learning paths for any career goal.
 
-Example:
+### Example Roadmap
 
 Software Engineer
 
@@ -242,7 +241,7 @@ Comprehensive administrative tools:
 ```text
                     ┌───────────────────────┐
                     │      Frontend UI      │
-                    │ Next.js + React + TS  │
+                    │    Next.js + React    │
                     └───────────┬───────────┘
                                 │
                                 ▼
@@ -276,7 +275,6 @@ Comprehensive administrative tools:
 
 - Next.js 16
 - React 19
-- TypeScript
 - Tailwind CSS
 - ShadCN UI
 - Radix UI
@@ -375,8 +373,6 @@ Used for:
 
 ✅ React 19
 
-✅ TypeScript
-
 ✅ Supabase PostgreSQL
 
 ✅ Prisma ORM
@@ -439,6 +435,6 @@ If you found this project helpful:
 
 ### "Empowering Careers Through Artificial Intelligence"
 
-Built with ❤️ using Next.js, React, TypeScript, Supabase, Prisma, Clerk, Inngest & Gemini AI.
+Built with ❤️ using Next.js, React, Supabase, Prisma, Clerk, Inngest & Gemini AI.
 
 </div>
