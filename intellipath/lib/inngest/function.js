@@ -83,14 +83,9 @@ export const generateIndustryInsights = inngest.createFunction(
         Include at least 5 common roles for salary ranges. Growth rate should be a percentage. Include at least 5 skills and trends.
       `;
 
-      const res = await step.ai.wrap(
-        "gemini",
-        async (p) => model.generateContent(p),
-        prompt
-      );
-
-      const text = res.response.candidates[0].content.parts[0].text || "";
-      const insights = JSON.parse(text.replace(/```(?:json)?\n?/g, "").trim());
+      const insights = await step.run(`AI: Analyze ${industry}`, async () => {
+        return callGeminiJSON(prompt);
+      });
 
       await step.run(`Update ${industry} insights`, async () => {
         await db.industryInsight.update({
