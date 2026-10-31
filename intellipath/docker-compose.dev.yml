@@ -1,0 +1,25 @@
+services:
+  dev:
+    image: node:20-alpine
+    container_name: intellipath-ai-dev
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    command: sh -c "apk add --no-cache libc6-compat openssl && npm install --legacy-peer-deps && npx prisma generate && npm run dev"
+    networks:
+      - intellipath-dev-net
+
+networks:
+  intellipath-dev-net:
+    driver: bridge
+

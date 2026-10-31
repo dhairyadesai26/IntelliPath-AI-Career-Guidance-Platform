@@ -15,6 +15,7 @@ Transforming career uncertainty into data-driven career success through Artifici
 ![Inngest](https://img.shields.io/badge/Inngest-Workflows-black?style=for-the-badge)
 ![Gemini AI](https://img.shields.io/badge/Gemini-AI-orange?style=for-the-badge&logo=google)
 ![Clerk](https://img.shields.io/badge/Clerk-Authentication-purple?style=for-the-badge)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 ### 🚀 AI-Powered Career Intelligence Platform
 

@@ -67,18 +67,24 @@ export async function getIndustryInsights() {
   // If insights are stale (nextUpdate has passed), regenerate them on-demand
   // This acts as a safety net in case the Inngest cron missed its run
   if (new Date(user.industryInsight.nextUpdate) < new Date()) {
-    const insights = await generateAIInsights(user.industry);
+    try {
+      const insights = await generateAIInsights(user.industry);
 
-    const updatedInsight = await db.industryInsight.update({
-      where: { industry: user.industry },
-      data: {
-        ...insights,
-        lastUpdated: new Date(),
-        nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      },
-    });
+      const updatedInsight = await db.industryInsight.update({
+        where: { industry: user.industry },
+        data: {
+          ...insights,
+          lastUpdated: new Date(),
+          nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      });
 
-    return updatedInsight;
+      return updatedInsight;
+    } catch (error) {
+      console.error("Failed to regenerate stale insights:", error);
+      // Return stale data instead of crashing the page
+      return user.industryInsight;
+    }
   }
 
   return user.industryInsight;
